@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "wesynapsepaakos01"
+		},
+		"AzureSynapseAnalytics1_connectionString": {
+			"value": ""
+		},
+		"FabricLabDB_connectionString": {
+			"value": ""
+		},
+		"paakossynapse2-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:paakossynapse2.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"wesynapsepaakos01-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:wesynapsepaakos01.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"paakossynapse2-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://paakossynapse2adl.dfs.core.windows.net"
+		},
+		"wesynapsepaakos01-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://wesynapsepaakos01adls.dfs.core.windows.net"
+		}
+	}
+}
