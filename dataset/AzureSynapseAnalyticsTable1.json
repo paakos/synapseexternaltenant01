@@ -1,0 +1,113 @@
+{
+	"name": "AzureSynapseAnalyticsTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSynapseAnalytics1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "OnlineSalesKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OrderDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DeliveryDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "StoreKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PromotionKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesOrderNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SalesOrderLineNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesQuantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesAmount",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "ReturnQuantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ReturnAmount",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "DiscountQuantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DiscountAmount",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "TotalCost",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "UnitCost",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "UnitPrice",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 18
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Sales1"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}
