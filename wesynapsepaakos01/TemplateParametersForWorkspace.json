@@ -8,6 +8,9 @@
 		"AzureSynapseAnalytics1_connectionString": {
 			"value": ""
 		},
+		"AzureSynapseAnalytics2_password": {
+			"value": ""
+		},
 		"FabricLabDB_connectionString": {
 			"value": ""
 		},
@@ -16,6 +19,15 @@
 		},
 		"wesynapsepaakos01-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:wesynapsepaakos01.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"AzureSynapseAnalytics2_properties_typeProperties_server": {
+			"value": "paakossynapse2.sql.azuresynapse.net"
+		},
+		"AzureSynapseAnalytics2_properties_typeProperties_database": {
+			"value": "sqlpool2"
+		},
+		"AzureSynapseAnalytics2_properties_typeProperties_userName": {
+			"value": "sqladminuser"
 		},
 		"paakossynapse2-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://paakossynapse2adl.dfs.core.windows.net"

@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSynapseAnalytics1'"
 		},
+		"AzureSynapseAnalytics2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSynapseAnalytics2'"
+		},
 		"FabricLabDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'FabricLabDB'"
@@ -24,6 +28,18 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'wesynapsepaakos01-WorkspaceDefaultSqlServer'",
 			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:wesynapsepaakos01.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"AzureSynapseAnalytics2_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "paakossynapse2.sql.azuresynapse.net"
+		},
+		"AzureSynapseAnalytics2_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "sqlpool2"
+		},
+		"AzureSynapseAnalytics2_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladminuser"
 		},
 		"paakossynapse2-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"type": "string",
@@ -46,6 +62,774 @@
 				"annotations": []
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_p33')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_p33",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy_p33",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "dbo.@{item().source.table}"
+										},
+										{
+											"name": "Destination",
+											"value": "dbo.@{item().destination.table}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "SqlDWSource",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "SqlPoolSink",
+											"allowCopyCommand": true,
+											"copyCommandSettings": {},
+											"tableOption": "autoCreate"
+										},
+										"enableStaging": true,
+										"stagingSettings": {
+											"linkedServiceName": {
+												"referenceName": "wesynapsepaakos01-WorkspaceDefaultStorage",
+												"type": "LinkedServiceReference"
+											},
+											"path": "stag"
+										},
+										"translator": {
+											"value": "@item().copyActivity.translator",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset_p33",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_table": "@item().source.table"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DestinationDataset_p33",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_table": "@item().destination.table"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"table": "Customers"
+								},
+								"destination": {
+									"table": "Customers"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "CustomerKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "CustomerKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "GeographyKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "GeographyKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "CustomerLabel",
+													"type": "String"
+												},
+												"sink": {
+													"name": "CustomerLabel",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Title",
+													"type": "String"
+												},
+												"sink": {
+													"name": "Title",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "FirstName",
+													"type": "String"
+												},
+												"sink": {
+													"name": "FirstName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "MiddleName",
+													"type": "String"
+												},
+												"sink": {
+													"name": "MiddleName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "LastName",
+													"type": "String"
+												},
+												"sink": {
+													"name": "LastName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "NameStyle",
+													"type": "Boolean"
+												},
+												"sink": {
+													"name": "NameStyle",
+													"type": "Boolean"
+												}
+											},
+											{
+												"source": {
+													"name": "BirthDate",
+													"type": "DateTime"
+												},
+												"sink": {
+													"name": "BirthDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "MaritalStatus",
+													"type": "String"
+												},
+												"sink": {
+													"name": "MaritalStatus",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Suffix",
+													"type": "String"
+												},
+												"sink": {
+													"name": "Suffix",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Gender",
+													"type": "String"
+												},
+												"sink": {
+													"name": "Gender",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "EmailAddress",
+													"type": "String"
+												},
+												"sink": {
+													"name": "EmailAddress",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "YearlyIncome",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "YearlyIncome",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "TotalChildren",
+													"type": "Byte"
+												},
+												"sink": {
+													"name": "TotalChildren",
+													"type": "Byte"
+												}
+											},
+											{
+												"source": {
+													"name": "NumberChildrenAtHome",
+													"type": "Byte"
+												},
+												"sink": {
+													"name": "NumberChildrenAtHome",
+													"type": "Byte"
+												}
+											},
+											{
+												"source": {
+													"name": "Education",
+													"type": "String"
+												},
+												"sink": {
+													"name": "Education",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Occupation",
+													"type": "String"
+												},
+												"sink": {
+													"name": "Occupation",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "HouseOwnerFlag",
+													"type": "String"
+												},
+												"sink": {
+													"name": "HouseOwnerFlag",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "NumberCarsOwned",
+													"type": "Byte"
+												},
+												"sink": {
+													"name": "NumberCarsOwned",
+													"type": "Byte"
+												}
+											},
+											{
+												"source": {
+													"name": "AddressLine1",
+													"type": "String"
+												},
+												"sink": {
+													"name": "AddressLine1",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "AddressLine2",
+													"type": "String"
+												},
+												"sink": {
+													"name": "AddressLine2",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Phone",
+													"type": "String"
+												},
+												"sink": {
+													"name": "Phone",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "DateFirstPurchase",
+													"type": "DateTime"
+												},
+												"sink": {
+													"name": "DateFirstPurchase",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "CustomerType",
+													"type": "String"
+												},
+												"sink": {
+													"name": "CustomerType",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CompanyName",
+													"type": "String"
+												},
+												"sink": {
+													"name": "CompanyName",
+													"type": "String"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "Sales1"
+								},
+								"destination": {
+									"table": "Sales1"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "OnlineSalesKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "OnlineSalesKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "OrderDate",
+													"type": "DateTime"
+												},
+												"sink": {
+													"name": "OrderDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "DeliveryDate",
+													"type": "DateTime"
+												},
+												"sink": {
+													"name": "DeliveryDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "StoreKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "StoreKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "ProductKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "PromotionKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "PromotionKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "CustomerKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "CustomerKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderNumber",
+													"type": "String"
+												},
+												"sink": {
+													"name": "SalesOrderNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderLineNumber",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "SalesOrderLineNumber",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesQuantity",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "SalesQuantity",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesAmount",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "SalesAmount",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "ReturnQuantity",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "ReturnQuantity",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ReturnAmount",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "ReturnAmount",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "DiscountQuantity",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "DiscountQuantity",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "DiscountAmount",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "DiscountAmount",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "TotalCost",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "TotalCost",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "UnitCost",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "UnitCost",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "UnitPrice",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "UnitPrice",
+													"type": "Decimal"
+												}
+											}
+										]
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "Sales_"
+								},
+								"destination": {
+									"table": "Sales_"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "OnlineSalesKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "OnlineSalesKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "OrderDate",
+													"type": "DateTime"
+												},
+												"sink": {
+													"name": "OrderDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "DeliveryDate",
+													"type": "DateTime"
+												},
+												"sink": {
+													"name": "DeliveryDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "StoreKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "StoreKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "ProductKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "PromotionKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "PromotionKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "CustomerKey",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "CustomerKey",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderNumber",
+													"type": "String"
+												},
+												"sink": {
+													"name": "SalesOrderNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderLineNumber",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "SalesOrderLineNumber",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesQuantity",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "SalesQuantity",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesAmount",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "SalesAmount",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "ReturnQuantity",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "ReturnQuantity",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ReturnAmount",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "ReturnAmount",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "DiscountQuantity",
+													"type": "Int32"
+												},
+												"sink": {
+													"name": "DiscountQuantity",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "DiscountAmount",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "DiscountAmount",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "TotalCost",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "TotalCost",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "UnitCost",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "UnitCost",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "UnitPrice",
+													"type": "Decimal"
+												},
+												"sink": {
+													"name": "UnitPrice",
+													"type": "Decimal"
+												}
+											}
+										]
+									}
+								}
+							}
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/SourceDataset_p33')]",
+				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_p33')]",
+				"[concat(variables('workspaceId'), '/linkedServices/wesynapsepaakos01-WorkspaceDefaultStorage')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/CopyRecursivo')]",
@@ -1384,6 +2168,35 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_p33')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"cw_table": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": {
+						"value": "@dataset().cw_table",
+						"type": "Expression"
+					}
+				},
+				"sqlPool": {
+					"referenceName": "sqlpool2",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/sqlpool2')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DestinationDataset_sst')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1409,6 +2222,35 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/sqlPools/sqlpool2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SourceDataset_p33')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSynapseAnalytics2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_table": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": {
+						"value": "@dataset().cw_table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureSynapseAnalytics2')]"
 			]
 		},
 		{
@@ -1474,6 +2316,34 @@
 				"type": "AzureSqlDW",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSynapseAnalytics1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureSynapseAnalytics2')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"server": "[parameters('AzureSynapseAnalytics2_properties_typeProperties_server')]",
+					"database": "[parameters('AzureSynapseAnalytics2_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureSynapseAnalytics2_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureSynapseAnalytics2_password')]"
+					}
 				},
 				"connectVia": {
 					"referenceName": "AutoResolveIntegrationRuntime",
