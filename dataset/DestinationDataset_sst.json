@@ -10,7 +10,6 @@
 		"type": "SqlPoolTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "dbo",
 			"table": {
 				"value": "@dataset().cw_table",
 				"type": "Expression"
